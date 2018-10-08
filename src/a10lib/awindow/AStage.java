@@ -1,7 +1,10 @@
 package a10lib.awindow;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 public abstract class AStage implements MouseListener, KeyListener, MouseMotionListener {
 

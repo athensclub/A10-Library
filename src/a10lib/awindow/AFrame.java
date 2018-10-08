@@ -4,6 +4,11 @@ import javax.swing.JFrame;
 
 public class AFrame extends JFrame {
 
+	/**
+	 * eclipse generated
+	 */
+	private static final long serialVersionUID = -48033537759175832L;
+
 	private APanel panel;
 
 	private AImage icon;

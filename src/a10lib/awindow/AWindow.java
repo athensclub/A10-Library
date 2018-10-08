@@ -102,7 +102,7 @@ public class AWindow implements Runnable {
 			lastTime = now;
 
 			if (delta >= 1) {
-				frame.repaint();
+				frame.render();
 				delta--;
 			}
 

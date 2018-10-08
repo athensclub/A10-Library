@@ -8,18 +8,36 @@ public class APanel extends JPanel{
 	
 	private AStage stage;
 	
+	/**
+	 * Create new instance of APanel containing AStage
+	 * @param s: the stage that this APanel is containing
+	 */
 	public APanel(AStage s) {
 		setStage(s);
 		setFocusable(true);
 	}
 	
+	/**
+	 * Create new instance of APanel
+	 */
+	public APanel() {
+		this(null);
+	}
+	
+	/**
+	 * Get the current AStage that this APanel is containing
+	 * @return the current AStage that this APanel is containing
+	 */
 	public AStage getStage() {
 		return stage;
 	}
 	
+	/**
+	 * Set the AStage that this APanel will be containing
+	 * @param s: the AStage that this APanel will be containing 
+	 */
 	public void setStage(AStage s) {
 		stage = s;
-		
 		if(this.getMouseListeners().length > 0) {
 			this.removeMouseListener(this.getMouseListeners()[0]);
 		}

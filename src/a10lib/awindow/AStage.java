@@ -5,10 +5,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+
+import a10lib.awindow.acomponent.AComponent;
 
 public abstract class AStage implements MouseListener, KeyListener, MouseMotionListener {
 
 	private AWindow window;
+
+	private ArrayList<AComponent> components = new ArrayList<>();
 
 	/**
 	 * How this stage is rendered
@@ -54,7 +59,7 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
@@ -78,6 +83,70 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	 */
 	public final AWindow getWindow() {
 		return window;
+	}
+
+	// not to be used by front end
+	protected void renderComponents(AGraphics g) {
+		for (AComponent c : getComponents()) {
+			c.render(g);
+		}
+	}
+
+	// not to be used by front end
+	protected final void onMouseReleased(MouseEvent e) {
+		for (AComponent c : getComponents()) {
+			c.onMouseReleased(e);
+		}
+	}
+
+	// not to be used by front end
+	protected final void onMouseMoved(MouseEvent e) {
+		for (AComponent c : getComponents()) {
+			c.onMouseMoved(e);
+		}
+	}
+
+	// not to be used by front end
+	protected final void onKeyPressed(KeyEvent e) {
+		for (AComponent c : getComponents()) {
+			c.onKeyPressed(e);
+		}
+	}
+	
+	//not to be used by front end
+	protected final void onMouseExited(MouseEvent e) {
+		for (AComponent c : getComponents()) {
+			c.onMouseExited(e);
+		}
+	}
+
+	/**
+	 * Add new AComponent to this AStage
+	 * 
+	 * @param c:
+	 *            AComponent to be added to this AStage
+	 */
+	public void addComponent(AComponent c) {
+		components.add(c);
+	}
+
+	/**
+	 * Remove AComponent from this AStage
+	 * 
+	 * @param c:
+	 *            AComponent to be removed from this AStage
+	 */
+	public void removeComponent(AComponent c) {
+		components.add(c);
+	}
+
+	/**
+	 * Get all the component of this AStage
+	 * 
+	 * @return all the component of this AStage
+	 */
+	public ArrayList<AComponent> getComponents() {
+		return components;
 	}
 
 }

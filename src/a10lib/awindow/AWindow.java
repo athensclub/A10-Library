@@ -1,13 +1,19 @@
 package a10lib.awindow;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 
 public class AWindow implements Runnable {
 
 	private AFrame frame;
-
+	
 	private float fps;
 
 	/**
@@ -26,6 +32,10 @@ public class AWindow implements Runnable {
 	public AWindow(String title, AStage s) {
 		this(title);
 		frame.setStage(s);
+	}
+	
+	public Rectangle getBounds() {
+		return new Rectangle(0,0,getWidth(),getHeight());
 	}
 
 	/**
@@ -123,6 +133,7 @@ public class AWindow implements Runnable {
 	 *            the stage that this AWindow will contain
 	 */
 	public void setStage(AStage s) {
+		
 		if (frame.getStage() != null) {
 			frame.getStage().setWindow(null);
 		}

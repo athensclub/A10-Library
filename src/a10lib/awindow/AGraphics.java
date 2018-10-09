@@ -3,6 +3,7 @@ package a10lib.awindow;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  * 
@@ -134,7 +135,7 @@ public class AGraphics {
 	}
 
 	/**
-	 * Fill an Rectangle using x,y as top-left corner point
+	 * Fill a Rectangle using x,y as top-left corner point
 	 * 
 	 * @param x:
 	 *            the x position of the top-left corner of the rectangle
@@ -150,7 +151,7 @@ public class AGraphics {
 	}
 
 	/**
-	 * Draw an Rectangle using x,y as top-left corner point
+	 * Draw a Rectangle using x,y as top-left corner point
 	 * 
 	 * @param x:
 	 *            the x position of the top-left corner of the rectangle
@@ -163,6 +164,26 @@ public class AGraphics {
 	 */
 	public void drawRect(int x, int y, int w, int h) {
 		g.drawRect(x, y, w, h);
+	}
+
+	/**
+	 * Fill a Rectangle using it's x,y as top-left corner point
+	 * 
+	 * @param r:
+	 *            the rectangle that is going to be fill
+	 */
+	public void fillRect(Rectangle r) {
+		fillRect(r.x, r.y, r.width, r.height);
+	}
+
+	/**
+	 * Draw a Rectangle using it's x,y as top-left corner point
+	 * 
+	 * @param r:
+	 *            the rectangle that is going to be drawn
+	 */
+	public void drawRect(Rectangle r) {
+		drawRect(r.x, r.y, r.width, r.height);
 	}
 
 	/**

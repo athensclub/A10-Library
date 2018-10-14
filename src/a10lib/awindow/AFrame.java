@@ -1,6 +1,7 @@
 package a10lib.awindow;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class AFrame extends JFrame {
 
@@ -84,7 +85,9 @@ public class AFrame extends JFrame {
 	 * Render one frame into this AFrame
 	 */
 	public void render() {
-		panel.repaint();
+		SwingUtilities.invokeLater(()->{
+			panel.repaint();
+		});
 	}
 
 }

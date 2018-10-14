@@ -1,8 +1,10 @@
 package a10lib.awindow;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 /**
@@ -14,6 +16,8 @@ public class AGraphics {
 
 	private Graphics g;
 
+	private Graphics2D g2d;
+
 	/**
 	 * For creating instance of AGraphics using java.awt.Graphics as renderer
 	 * 
@@ -21,6 +25,16 @@ public class AGraphics {
 	 */
 	public AGraphics(Graphics g) {
 		setGraphics(g);
+
+	}
+
+	/**
+	 * Get the size of font of the current AGraphics
+	 * 
+	 * @return the size of font of the current AGraphics
+	 */
+	public int getFontSize() {
+		return getFont().getSize();
 	}
 
 	/**
@@ -35,8 +49,52 @@ public class AGraphics {
 	 */
 	public void drawCenteredText(String s, int x, int y) {
 		int n = x - (stringWidth(s) / 2);
-		int m = y - (stringHeight() / 2);
+		int m = y - (stringHeight() / 2) + g.getFontMetrics().getAscent();
 		drawText(s, n, m);
+	}
+
+	/**
+	 * Draw a line using given coordinates
+	 * 
+	 * @param x1:
+	 *            the x position of the first point of the line
+	 * @param y1:
+	 *            the y position of the first point of the line
+	 * @param x2:
+	 *            the x position of the second point of the line
+	 * @param y2:
+	 *            the y position of the second point of the line
+	 */
+	public void drawLine(int x1, int y1, int x2, int y2) {
+		g.drawLine(x1, y1, x2, y2);
+	}
+
+	/**
+	 * Draw a text where its y position is its center y position
+	 * 
+	 * @param s:
+	 *            String that is used to draw
+	 * @param x:
+	 *            x position of the text
+	 * @param y:
+	 *            y position of the center of the text
+	 */
+	public void drawYCenteredText(String s, int x, int y) {
+		drawCenteredText(s, x + (stringWidth(s) / 2), y);
+	}
+
+	/**
+	 * Draw a text where its x position is its center x position
+	 * 
+	 * @param s:
+	 *            String that is used to draw
+	 * @param x:
+	 *            x position of the center of the text
+	 * @param y:
+	 *            y position of the text
+	 */
+	public void drawXCenteredText(String s, int x, int y) {
+		drawCenteredText(s, x, y + ((stringHeight() / 2) + g.getFontMetrics().getAscent()));
 	}
 
 	/**
@@ -99,6 +157,17 @@ public class AGraphics {
 	 */
 	public void setGraphics(Graphics g) {
 		this.g = g;
+		g2d = (Graphics2D) g;
+	}
+
+	/**
+	 * Set the stroke width of this AGraphics
+	 * 
+	 * @param w:
+	 *            the new stroke width of this AGraphics
+	 */
+	public void setStrokeWidth(int w) {
+		g2d.setStroke(new BasicStroke(w));
 	}
 
 	/**

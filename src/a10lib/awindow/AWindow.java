@@ -1,21 +1,30 @@
 package a10lib.awindow;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.Toolkit;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-public class AWindow implements Runnable {
+public class AWindow implements Runnable,MouseTracker,KeyTracker {
 
 	private AFrame frame;
 	
 	private float fps;
-
+	
+	/**
+	 * Default width of every AWindow
+	 */
+	public static final int DEFAULT_WIDTH = 800;
+	
+	/**
+	 * Default height of every AWindow
+	 */
+	public static final int DEFAULT_HEIGHT = 600;
+	
 	/**
 	 * Default FPS of every AWindow
 	 */
@@ -34,6 +43,14 @@ public class AWindow implements Runnable {
 		frame.setStage(s);
 	}
 	
+	public void setCursorIcon(AImage img) {
+		frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(img.getImage() , new Point(0,0), ""));
+	}
+	
+	public void setCursorIcon(Cursor c) {
+		frame.setCursor(c);
+	}
+	
 	public Rectangle getBounds() {
 		return new Rectangle(0,0,getWidth(),getHeight());
 	}
@@ -48,6 +65,7 @@ public class AWindow implements Runnable {
 		frame = new AFrame(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setFPS(AWindow.DEFAULT_FPS);
+		setSize(DEFAULT_WIDTH,DEFAULT_HEIGHT);
 	}
 
 	/**
@@ -201,7 +219,8 @@ public class AWindow implements Runnable {
 		}
 
 	}
-
+	
+	
 	/**
 	 * Start Running and Showing this AWindow
 	 */
@@ -210,6 +229,21 @@ public class AWindow implements Runnable {
 		frame.setVisible(true);
 		Thread t = new Thread(this, frame.getTitle());
 		t.start();
+	}
+
+	@Override
+	public int getMouseX() {
+		return frame.getPanel().getMouseX();
+	}
+
+	@Override
+	public int getMouseY() {
+		return frame.getPanel().getMouseY();
+	}
+
+	@Override
+	public boolean isHoldingKey(int code) {
+		return frame.getPanel().isHoldingKey(code);
 	}
 
 }

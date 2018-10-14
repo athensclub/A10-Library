@@ -1,5 +1,6 @@
 package a10lib.awindow;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -36,6 +37,8 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	 *            the renderer that is used to render this stage's background
 	 */
 	public void renderBackground(AGraphics g) {
+		g.setColor(Color.WHITE);
+		g.fillRect(window.getBounds());
 	}
 
 	@Override
@@ -100,9 +103,9 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	}
 
 	// not to be used by front end
-	protected final void onMouseMoved(MouseEvent e) {
-		for (AComponent c : getComponents()) {
-			c.onMouseMoved(e);
+	protected final void updateComponents() {
+		for(AComponent c : getComponents()) {
+			c.update(window);
 		}
 	}
 
@@ -114,9 +117,9 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	}
 	
 	//not to be used by front end
-	protected final void onMouseExited(MouseEvent e) {
-		for (AComponent c : getComponents()) {
-			c.onMouseExited(e);
+	protected final void onKeyReleased(KeyEvent e) {
+		for(AComponent c : getComponents()) {
+			c.onKeyReleased(e);
 		}
 	}
 

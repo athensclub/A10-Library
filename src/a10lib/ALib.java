@@ -1,29 +1,71 @@
 package a10lib;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ALib {
 
 	/**
-	 * Creates sub array from an existing array
+	 * Map a value that goes between min1 and max1 to a value that goes between min2
+	 * and max2
 	 * 
-	 * @param list
-	 *            An existing array that is used to created array
-	 * @param begin
-	 *            The index of the existing array that is used as beginning of the
-	 *            subarray
-	 * @param end
-	 *            The index of the existing array that is used as end of the
-	 *            subarray
-	 *
-	 * @return The subarray which contains element of exist array from begin index
-	 *         to end index
+	 * @param value:
+	 *            a value to be mapped
+	 * @param min1:
+	 *            minimum value of the given value
+	 * @param max1:
+	 *            maximum value of the given value
+	 * @param min2:
+	 *            minimum value of result value
+	 * @param max2:
+	 *            maximum value of result value
+	 * @return a value that goes between min2 and max2 that come from mapping from
+	 *         value that goes from min1 to max1
 	 */
-	public static <T> T[] subArray(T[] list, int begin, int end) {
-		// T[] result = Array.newInstance(arg0, arg1);
-		return Arrays.copyOfRange(list, begin, end + 1);
+	public static final double map(double value, double min1, double max1, double min2, double max2) {
+		return min2 + (max2 - min2) * ((value - min1) / (max1 - min1));
+	}
+
+	/**
+	 * Map a value that goes between min1 and max1 to a value that goes between min2
+	 * and max2
+	 * 
+	 * @param value:
+	 *            a value to be mapped
+	 * @param min1:
+	 *            minimum value of the given value
+	 * @param max1:
+	 *            maximum value of the given value
+	 * @param min2:
+	 *            minimum value of result value
+	 * @param max2:
+	 *            maximum value of result value
+	 * @return a value that goes between min2 and max2 that come from mapping from
+	 *         value that goes from min1 to max1
+	 */
+	public static final int map(int value, int min1, int max1, int min2, int max2) {
+		return (int) map((double) value, (double) min1, (double) max1, (double) min2, (double) max2);
+	}
+
+	/**
+	 * Check if the given string contains only ASCII characters
+	 * 
+	 * @param str:
+	 *            string to check if it contains only ASCII characters
+	 * @return true if the given string contains only ASCII characters
+	 */
+	public static final boolean isASCII(String str) {
+		return str.matches("\\A\\p{ASCII}*\\z");
+	}
+	
+	/**
+	 * Check if the given character is ASCII character
+	 * 
+	 * @param c:
+	 *            character to check if it is ASCII character
+	 * @return true if the given character is ASCII character
+	 */
+	public static final boolean isASCII(char c) {
+		return Character.toString(c).matches("\\A\\p{ASCII}*\\z");
 	}
 
 	/**
@@ -33,7 +75,7 @@ public class ALib {
 	 * 
 	 * @return whether the given number is prime or not
 	 */
-	public static boolean isPrime(int num) {
+	public static final boolean isPrime(int num) {
 
 		// make the input absolute to make it easier to check
 		num = Math.abs(num);
@@ -47,7 +89,7 @@ public class ALib {
 		// divisible by any of it
 		for (int i = 2; i <= num / 2; i++) {
 
-			// return fakse immediately after knowing that the input can be divided by other
+			// return false immediately after knowing that the input can be divided by other
 			// number other than 1 and itself
 			if (num % i == 0) {
 				return false;
@@ -63,10 +105,10 @@ public class ALib {
 	/**
 	 * 
 	 * @param num
-	 * 			number to factorize
+	 *            number to factorize
 	 * @return list of all prime number multiplied to get the given number
 	 */
-	public static ArrayList<Integer> factorize(int num) {
+	public static final ArrayList<Integer> factorize(int num) {
 
 		// creating array to hold the factorized numbers
 		ArrayList<Integer> result = new ArrayList<>();

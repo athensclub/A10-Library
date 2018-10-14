@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import a10lib.awindow.AGraphics;
+import a10lib.awindow.AWindow;
 
 public class AButton extends AComponent implements Listenable {
 
@@ -25,6 +26,25 @@ public class AButton extends AComponent implements Listenable {
 	 */
 	public AButton() {
 		this("");
+	}
+
+	/**
+	 * Set the current color of this AButton's text
+	 * 
+	 * @param c:
+	 *            the new color of this AButton's text
+	 */
+	public void setTextColor(Color c) {
+		textColor = c;
+	}
+
+	/**
+	 * Get the current color of this AButton's text
+	 * 
+	 * @return the current color of this AButton's text
+	 */
+	public Color getTextColor() {
+		return textColor;
 	}
 
 	/**
@@ -163,18 +183,6 @@ public class AButton extends AComponent implements Listenable {
 	}
 
 	@Override
-	public void onMouseMoved(MouseEvent e) {
-		if (getBounds().contains(e.getX(), e.getY())) {
-			isMouseOver = true;
-			for (Runnable r : mouseOverListeners) {
-				r.run();
-			}
-		} else {
-			isMouseOver = false;
-		}
-	}
-
-	@Override
 	public void onKeyPressed(KeyEvent e) {
 
 	}
@@ -195,8 +203,21 @@ public class AButton extends AComponent implements Listenable {
 	}
 
 	@Override
-	public void onMouseExited(MouseEvent e) {
-		isMouseOver = false;
+	public void update(AWindow w) {
+		if (getBounds().contains(w.getMouseX(), w.getMouseY())) {
+			isMouseOver = true;
+			for (Runnable r : mouseOverListeners) {
+				r.run();
+			}
+		} else {
+			isMouseOver = false;
+		}
+	}
+
+	@Override
+	public void onKeyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

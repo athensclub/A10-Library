@@ -322,7 +322,9 @@ public class AGraphics {
 	 *            the new font size
 	 */
 	public void setFontSize(int s) {
-		setFont(new Font(getFont().getFontName(), Font.PLAIN, s));
+		if(getFontSize() != s) {
+			setFont(new Font(getFont().getFontName(), Font.PLAIN, s));
+		}
 	}
 
 	/**

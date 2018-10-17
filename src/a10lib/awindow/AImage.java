@@ -41,8 +41,28 @@ public class AImage {
 	}
 
 	/**
+	 * Get the current width of this AImage
+	 * 
+	 * @return the current width of this AImage
+	 */
+	public int getWidth() {
+		return getImage().getWidth();
+	}
+
+	/**
+	 * Get the current height of this AImage
+	 * 
+	 * @return the current height of this AImage
+	 */
+	public int getHeight() {
+		return getImage().getHeight();
+	}
+
+	/**
 	 * Create new instance of AImage by loading Image from the file path given
-	 * @param path: the file path of image
+	 * 
+	 * @param path:
+	 *            the file path of image
 	 * @return new instance of AImage by loading Image from the file path given
 	 */
 	public static AImage read(String path) {

@@ -2,22 +2,29 @@ package a10lib.awindow.acomponent;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import a10lib.awindow.AGraphics;
+import a10lib.awindow.AImage;
 import a10lib.awindow.AWindow;
 
-public class AButton extends AComponent implements Listenable {
+public class AButton extends AComponent {
 
 	private Color mouseOverBackground, textColor;
 
 	private String text;
 
 	private boolean isMouseOver;
+	
+	private AImage iconImage;
+	
+	private int fontSize = 16;
 
-	private ArrayList<Runnable> listeners;
+	private ArrayList<ActionListener> listeners;
 
 	private ArrayList<Runnable> mouseOverListeners;
 
@@ -36,6 +43,44 @@ public class AButton extends AComponent implements Listenable {
 	 */
 	public void setTextColor(Color c) {
 		textColor = c;
+	}
+	
+	/**
+	 * Set the current font size of this AButton
+	 * 
+	 * @param f:
+	 *            the new font size of this AButton
+	 */
+	public void setFontSize(int f) {
+		fontSize = f;
+	}
+	
+	/**
+	 * Set Icon image of this AButton
+	 * 
+	 * @param img
+	 *            the icon image of this AButton
+	 */
+	public void setIcon(AImage img) {
+		iconImage = img;
+	}
+
+	/**
+	 * Get the current icon image of this AButton
+	 * 
+	 * @return the current icon image of this AButton
+	 */
+	public AImage getIcon() {
+		return iconImage;
+	}
+	
+	/**
+	 * Get the current font size of this AButton
+	 * 
+	 * @return the current font size of this AButton
+	 */
+	public int getFontSize() {
+		return fontSize;
 	}
 
 	/**
@@ -152,15 +197,25 @@ public class AButton extends AComponent implements Listenable {
 		text = str;
 	}
 
-	private void calculateBounds(AGraphics g) {
+	private void calculateBounds(AGraphics g,AImage image) {
 		Rectangle bounds = getBounds();
-		bounds.width = g.stringWidth(text) + 10;
+		int imgw = 0,imgh = 0;
+		if(image != null) {
+			imgw = image.getWidth();
+			imgh = image.getHeight();
+		}
+		bounds.width = g.stringWidth(text) + 10+imgw;
 		bounds.height = g.stringHeight() + 10;
+		if(bounds.height < imgh) {
+			bounds.height = imgh + 10;
+		}
 	}
 
 	@Override
 	public void render(AGraphics g) {
-		calculateBounds(g);
+		g.setFontSize(fontSize);
+		AImage image = iconImage;
+		calculateBounds(g,image);
 		Rectangle bounds = getBounds();
 		if (isMouseOver) {
 			g.setColor(mouseOverBackground);
@@ -169,36 +224,42 @@ public class AButton extends AComponent implements Listenable {
 		}
 		g.fillRect(bounds);
 		g.setColor(textColor);
-		g.drawText(text, bounds.x + 5, bounds.y + (g.stringHeight()));
+		if(iconImage != null) {
+			if(!text.equals("") && text != null) {
+				g.drawImage(image, bounds.x,bounds.y + 5);
+				g.drawText(text, bounds.x + image.getWidth(), bounds.y + g.stringHeight());
+			}else {
+				g.drawImage(image, bounds.x+(bounds.width/2 - image.getWidth()/2), bounds.y + 5);
+			}
+		}else {
+			g.drawText(text, bounds.x + 5, bounds.y + (g.stringHeight()));
+		}
 	}
 
 	@Override
 	public void onMouseReleased(MouseEvent e) {
 		if (isMouseOver) {
-			for (Runnable r : listeners) {
-				r.run();
+			ActionEvent event = new ActionEvent(this,0,toString(),System.currentTimeMillis(),ActionEvent.ACTION_PERFORMED);
+			for (ActionListener r : listeners) {
+				r.actionPerformed(event);
 			}
 			isMouseOver = false;
 		}
 	}
 
-	@Override
 	public void onKeyPressed(KeyEvent e) {
 
 	}
 
-	@Override
-	public void addListener(Runnable r) {
+	public void addActionListener(ActionListener r) {
 		listeners.add(r);
 	}
 
-	@Override
-	public void removeListener(Runnable r) {
+	public void removeListener(ActionListener r) {
 		listeners.remove(r);
 	}
 
-	@Override
-	public ArrayList<Runnable> getListeners() {
+	public ArrayList<ActionListener> getListeners() {
 		return listeners;
 	}
 
@@ -213,10 +274,13 @@ public class AButton extends AComponent implements Listenable {
 			isMouseOver = false;
 		}
 	}
+	
+	public String toString() {
+		return getText();
+	}
 
 	@Override
 	public void onKeyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 

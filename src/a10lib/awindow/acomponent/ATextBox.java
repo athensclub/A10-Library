@@ -184,7 +184,7 @@ public class ATextBox extends AComponent {
 		return count;
 	}
 
-	private void renderCursor(AGraphics g, int charCount) {
+	private void renderCursor(AGraphics g) {
 
 		int spaceWidth = g.stringWidth(" ");
 
@@ -201,7 +201,7 @@ public class ATextBox extends AComponent {
 			return;
 		}
 
-		for (; i < charCount - 1; i++) {
+		for (; i < (idx + cursorIDX) - 1; i++) {
 			x1 += g.stringWidth(Character.toString(text.charAt(i)));
 		}
 
@@ -218,14 +218,12 @@ public class ATextBox extends AComponent {
 
 	@Override
 	public void render(AGraphics g) {
-		if (g.getFontSize() != fontSize) {
-			g.setFontSize(fontSize);
-		}
+		g.setFontSize(fontSize);
 		boundsSize(g);
 		int charCount = renderableCharCount(g, idx);
 		if (editing) {
 			updateCursor(g);
-			renderCursor(g, charCount);
+			renderCursor(g);
 		}
 		Rectangle bounds = getBounds();
 		g.setColor(getBackgroundColor());
@@ -249,7 +247,15 @@ public class ATextBox extends AComponent {
 	@Override
 	public void onKeyReleased(KeyEvent e) {
 		if (editing) {
-			if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+			if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+				if(cursorIDX > 0) {
+					cursorIDX--;
+				}
+			}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+				if(cursorIDX < text.length()) {
+					cursorIDX++;
+				}
+			}else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 				if (text.length() > 0) {
 					backspace();
 				}

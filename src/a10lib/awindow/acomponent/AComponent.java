@@ -1,6 +1,7 @@
 package a10lib.awindow.acomponent;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -52,7 +53,7 @@ public abstract class AComponent {
 	public Color getBackgroundColor() {
 		return background;
 	}
-	
+
 	public abstract void onKeyReleased(KeyEvent e);
 
 	public abstract void onMouseReleased(MouseEvent e);
@@ -75,33 +76,62 @@ public abstract class AComponent {
 	public Rectangle getBounds() {
 		return bounds;
 	}
-	
+
 	/**
 	 * Set the width of this AComponent
-	 * @param w: the new width of this AComponent
+	 * 
+	 * @param w:
+	 *            the new width of this AComponent
 	 */
 	public void setWidth(int w) {
-		setBounds(new Rectangle(bounds.x,bounds.y,w,bounds.height));
+		bounds.width = w;
 	}
-	
+
 	/**
-	 * Get the current width of this component
-	 * @return the current width of this component
+	 * Get the current width of this AComponent
+	 * 
+	 * @return the current width of this AComponent
 	 */
-	public int getWidth(){
+	public int getWidth() {
 		return bounds.width;
 	}
-	
+
+	/**
+	 * Set the position of this AComponent
+	 * 
+	 * @param p:
+	 *            the new position of this AComponent
+	 */
+	public void setPosition(Point p) {
+		setPosition(p.x, p.y);
+	}
+
+	/**
+	 * Set the position of this AComponent
+	 * 
+	 * @param x:
+	 *            the new x position of this AComponent
+	 * @param y:
+	 *            the new y position of this AComponent
+	 */
+	public void setPosition(int x, int y) {
+		setX(x);
+		setY(y);
+	}
+
 	/**
 	 * Set the height of this AComponent
-	 * @param h: the new height of this AComponent
+	 * 
+	 * @param h:
+	 *            the new height of this AComponent
 	 */
 	public void setHeight(int h) {
-		setBounds(new Rectangle(bounds.x,bounds.y,bounds.width,h));
+		bounds.height = h;
 	}
-	
+
 	/**
 	 * Get the current height of this component
+	 * 
 	 * @return the current height of this component
 	 */
 	public int getHeight() {
@@ -115,7 +145,7 @@ public abstract class AComponent {
 	 *            new x position of this AComponent
 	 */
 	public void setX(int x) {
-		setBounds(new Rectangle(x,bounds.y,bounds.width,bounds.height));
+		bounds.x = x;
 	}
 
 	/**
@@ -134,7 +164,7 @@ public abstract class AComponent {
 	 *            new y position of this AComponent
 	 */
 	public void setY(int y) {
-		setBounds(new Rectangle(bounds.x,y,bounds.width,bounds.height));
+		bounds.y = y;
 	}
 
 	/**
@@ -158,9 +188,12 @@ public abstract class AComponent {
 		bounds.width = r.width;
 		bounds.height = r.height;
 	}
-	
-	public void setBounds(int x,int y,int width,int height) {
-		setBounds(new Rectangle(x,y,width,height));
+
+	public void setBounds(int x, int y, int width, int height) {
+		bounds.x = y;
+		bounds.y = y;
+		bounds.width = width;
+		bounds.height = height;
 	}
 
 	public void update() {

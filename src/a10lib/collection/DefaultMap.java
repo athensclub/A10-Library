@@ -433,8 +433,6 @@ public interface DefaultMap<K, V> extends Map<K, V> {
         }
     }
 
-    public Object clone();
-
     /**
      * Utility method for SimpleEntry and SimpleImmutableEntry. Test for equality,
      * checking for nulls.

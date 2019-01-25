@@ -10,6 +10,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import a10lib.event.ClientConnectionEvent;
+import a10lib.event.ObjectStreamEvent;
+
 /**
  * ' A class representing server-side
  * 
@@ -45,6 +48,14 @@ public class Server {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+    }
+    
+    /**
+     *
+     * @return The thread pool handling all of threads in this server
+     */
+    public ExecutorService getThreadPool() {
+	return threadPool;
     }
 
     /**

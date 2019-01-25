@@ -7,6 +7,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
+import a10lib.event.ClientConnectionEvent;
+import a10lib.event.ObjectStreamEvent;
+
 /**
  * 
  * A class representing client-side connection

@@ -8,6 +8,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.function.Consumer;
 
+import a10lib.event.ClientConnectionEvent;
+import a10lib.event.ObjectStreamEvent;
+
 /**
  * A class containing a socket streams represent a client both on server-side
  * and on client-side
@@ -125,6 +128,7 @@ public class Client {
     public void sendObject(Object obj) {
 	try {
 	    out.writeObject(obj);
+	    out.flush();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}

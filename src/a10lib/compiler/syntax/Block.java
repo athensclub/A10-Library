@@ -2,6 +2,10 @@ package a10lib.compiler.syntax;
 
 import java.util.LinkedList;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import a10lib.util.Strings;
+
 /**
  * A class representing a block which will contains list of statement and blocks
  * 
@@ -20,6 +24,16 @@ public class Block extends Statement {
      * Create new instance of block
      */
     public Block() {
+    }
+    
+   @Override
+    public void addTo(DefaultMutableTreeNode treeNode,String name) {
+	int i = 0;
+	DefaultMutableTreeNode result = new DefaultMutableTreeNode("Block_" + name);
+	for(Statement st : subStatement) {
+	   st.addTo(result, "Substatement_" + i++);
+	}
+	treeNode.add(result);
     }
 
     /**
@@ -73,10 +87,10 @@ public class Block extends Statement {
     public LinkedList<Statement> getSubStatement() {
 	return subStatement;
     }
-
+    
     @Override
     public String toString() {
-	return subStatement.toString();
+	return "Block:\n" + Strings.addTabInFrontEveryLine(Strings.toStringNewLine(subStatement));
     }
 
 }

@@ -30,7 +30,7 @@ public class Parser {
     private LinkedList<Block> subBlocks = new LinkedList<>();
 
     private boolean autoCompleteOnEof;
-
+    
     /**
      * Set whether this parser will automatically end current block when it reach
      * end of file or to throw an exception
@@ -114,6 +114,7 @@ public class Parser {
 	currentStatement = new LinkedList<>();
 	subBlocks = new LinkedList<>();
 	Token current = null;
+	buffer.clear();
 	while (true) {
 	    if (!buffer.isEmpty()) {
 		current = buffer.removeLast();

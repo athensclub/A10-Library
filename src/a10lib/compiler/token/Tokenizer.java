@@ -1,14 +1,18 @@
 package a10lib.compiler.token;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import a10lib.compiler.ATokenizingException;
+import a10lib.util.Strings;
 
 public abstract class Tokenizer {
 
     protected TokenFilter filter = TokenFilter.DO_NOTHING;
 
     protected ArrayList<TokenProvider> providers = new ArrayList<>();
+
+    private LinkedList<Character> pushBackBuffer = new LinkedList<>();
 
     protected StringBuilder current;
 
@@ -57,21 +61,35 @@ public abstract class Tokenizer {
     }
 
     /**
-     * push the current token back 1 character and append it later
-     * 
-     * @throws Exception:
-     *             If failed to push back character
+     * get the next character by implementation of each tokenizer's char stream
+     * @throws Exception 
      */
-    public abstract void previousChar() throws Exception;
+    protected abstract char nextCharInStream() throws Exception;
+
+    /**
+     * push the current token{@code Tokenizer} class's current {@code StringBuilder}
+     * object) back 1 character and append it later
+     * 
+     */
+    public void previousChar() {
+	pushBackBuffer.addLast(Strings.removeLastChar(current));
+    }
 
     /**
      * append the next character to the current token({@code Tokenizer} class's
      * current {@code StringBuilder} object)
-     * 
-     * @throws Exception:
-     *             if failed to append next character
      */
-    protected abstract void nextChar() throws Exception;
+    public void nextChar() {
+	if (!pushBackBuffer.isEmpty()) {
+	    current.append(pushBackBuffer.removeLast());
+	} else {
+	    try {
+		current.append(nextCharInStream());
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	}
+    }
 
     /**
      * Return whether this tokenizer reaches end of file yet
@@ -89,13 +107,11 @@ public abstract class Tokenizer {
      */
     public Token nextToken() throws ATokenizingException {
 	current = new StringBuilder();
-	while (!eof()) {
-	    try {
-		nextChar();
-	    } catch (Exception e) {
-		e.printStackTrace();
-		return null;
+	while (true) {
+	    if(eof() && pushBackBuffer.isEmpty()) {
+		    break;
 	    }
+	    nextChar();
 	    filter.filter(current);
 	    for (TokenProvider provider : providers) {
 		if (provider.matchToken(this, current)) {

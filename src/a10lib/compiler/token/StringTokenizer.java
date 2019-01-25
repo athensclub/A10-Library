@@ -11,6 +11,15 @@ public class StringTokenizer extends Tokenizer {
     private String string;
 
     private int index;
+    
+    /**
+     * Reset the string to be tokenized to the given string
+     * @param str
+     */
+    public void reset(String str) {
+	index = 0;
+	string = str;
+    }
 
     /**
      * Create new string tokenizer with the given string to be tokenized
@@ -28,14 +37,8 @@ public class StringTokenizer extends Tokenizer {
     }
 
     @Override
-    public void previousChar() {
-	index--;
-	current.deleteCharAt(current.length() - 1);
-    }
-
-    @Override
-    protected void nextChar() {
-	current.append(string.charAt(index++));
+    protected char nextCharInStream() {
+	return string.charAt(index++);
     }
 
 }

@@ -63,38 +63,8 @@ public class StreamTokenizer extends Tokenizer {
     }
 
     @Override
-    public void previousChar() throws OperationNotSupportedException, IOException {
-	if (!input.markSupported()) {
-	    throw new OperationNotSupportedException("Input stream does not support mark(int)");
-	} else if (current.length() < 1) {
-	    throw new OperationNotSupportedException("Current Token String Stream length is 0");
-	} else {
-	    eof = false;
-	    index--;
-	    current.deleteCharAt(current.length() - 1);
-	    input.reset();
-	    for (int j = 0; j < index; j++) {
-		input.read();
-	    }
-	}
-    }
-
-    @Override
-    protected void nextChar() throws IOException {
-	if (current.length() < 1) {
-	    if (input.markSupported()) {
-		index = 0;
-		input.mark(maxTokenSize);
-	    }
-	}
-	int read = input.read();
-	if (read != -1) {
-	    current.append((char) read);
-	} else {
-	    eof = true;
-	}
-	// System.out.println(current + " -> " + index);
-	index++;
+    protected char nextCharInStream() throws IOException {
+	return (char) input.read();
     }
 
     @Override

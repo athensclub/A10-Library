@@ -1,6 +1,7 @@
 package a10lib.awindow;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 
 import a10lib.awindow.acomponent.AComponent;
 
-public abstract class AStage implements MouseListener, KeyListener, MouseMotionListener {
+public abstract class AStage implements MouseListener, KeyListener, MouseMotionListener,MouseTracker {
 
 	private AWindow window;
 
@@ -40,6 +41,16 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 		g.setColor(Color.WHITE);
 		g.fillRect(window.getBounds());
 	}
+	
+	@Override
+	public int getMouseX() {
+		return getWindow().getMouseX();
+	}
+	
+	@Override
+	public int getMouseY() {
+		return getWindow().getMouseY();
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -67,6 +78,18 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
 	}
 
 	/**
@@ -104,8 +127,18 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 
 	// not to be used by front end
 	protected final void updateComponents() {
-		for(AComponent c : getComponents()) {
+		int mouseX = window.getMouseX();
+		int mouseY = window.getMouseY();
+		boolean changedCursor = false;
+		for (AComponent c : getComponents()) {
+			if(c.getBounds().contains(mouseX, mouseY)) {
+				window.setCursorIcon(c.getCursor());
+				changedCursor = true;
+			}
 			c.update(window);
+		}
+		if(!changedCursor) {
+			window.setCursorIcon(Cursor.getDefaultCursor());
 		}
 	}
 
@@ -115,10 +148,10 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 			c.onKeyPressed(e);
 		}
 	}
-	
-	//not to be used by front end
+
+	// not to be used by front end
 	protected final void onKeyReleased(KeyEvent e) {
-		for(AComponent c : getComponents()) {
+		for (AComponent c : getComponents()) {
 			c.onKeyReleased(e);
 		}
 	}
@@ -131,6 +164,30 @@ public abstract class AStage implements MouseListener, KeyListener, MouseMotionL
 	 */
 	public void addComponent(AComponent c) {
 		components.add(c);
+	}
+
+	/**
+	 * Add new AComponent to this AStage
+	 * 
+	 * @param c:
+	 *            AComponent to be added to this AStage
+	 */
+	public void addComponents(AComponent... c) {
+		for (AComponent com : c) {
+			addComponent(com);
+		}
+	}
+
+	/**
+	 * Remove AComponent from this AStage
+	 * 
+	 * @param c:
+	 *            AComponent to be removed from this AStage
+	 */
+	public void removeComponents(AComponent... c) {
+		for (AComponent com : c) {
+			removeComponent(com);
+		}
 	}
 
 	/**

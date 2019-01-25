@@ -8,6 +8,12 @@ import a10lib.compiler.token.TokenProvider;
 import a10lib.compiler.token.Tokenizer;
 import a10lib.util.Strings;
 
+/**
+ * UNFINISHED
+ * @author Athensclub
+ *
+ */
+@Deprecated
 public class NumberProvider extends TokenProvider {
 
     private TokenProvider nonNumberProvider;

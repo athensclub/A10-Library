@@ -198,7 +198,8 @@ public class PostfixParser extends Parser {
 	KeywordProvider keyword = new KeywordProvider();
 	keyword.addKeywords("+", "-", "*", "/", "(", ")");
 	whitespace.setTokenProvider(keyword);
-	keyword.setNonKeywordProvider(new NumberProvider());
+	NumberProvider number = new NumberProvider();
+	tokenizer.addProvider(number);
 	tokenizer.addProvider(whitespace);
 	return tokenizer;
     }

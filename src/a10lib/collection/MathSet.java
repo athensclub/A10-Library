@@ -2,6 +2,13 @@ package a10lib.collection;
 
 import java.util.*;
 
+/**
+ * A set that should represent a mathematical set.Planning on redesigning this idea.
+ * @author Athensclub
+ *
+ * @param <T>
+ */
+@Deprecated
 public interface MathSet<T> extends Set<T>,Cloneable {
 
     public static <E> MathSet<E> from(Set<E> from){

@@ -14,18 +14,7 @@ import javax.naming.OperationNotSupportedException;
  */
 public class StreamTokenizer extends Tokenizer {
 
-    /**
-     * Default size of maximum token size that can be marked to get previous
-     * character as this stream tokenizer use Reader.mark() to perform
-     * previousChar()
-     */
-    public static final int DEFAULT_MAX_TOKEN_SIZE = 100;
-
     private boolean eof;
-
-    private int index;
-
-    private int maxTokenSize;
 
     private Reader input;
 
@@ -40,26 +29,12 @@ public class StreamTokenizer extends Tokenizer {
     }
 
     /**
-     * Get size of maximum token size that can be marked to get previous character
-     * as this stream tokenizer use Reader.mark() to perform previousChar()
+     * Reset the stream to be tokenized to be the given stream
      * 
-     * @return size of maximum token size that can be marked to get previous
-     *         character as this stream tokenizer use Reader.mark() to perform
-     *         previousChar()
+     * @param reader
      */
-    public int getMaxTokenSize() {
-	return maxTokenSize;
-    }
-
-    /**
-     * Set size of maximum token size that can be marked to get previous character
-     * as this stream tokenizer use Reader.mark() to perform previousChar()
-     * 
-     * @param maxTokenSize:
-     *            the maximum size
-     */
-    public void setMaxTokenSize(int maxTokenSize) {
-	this.maxTokenSize = maxTokenSize;
+    public void reset(Reader reader) {
+	input = reader;
     }
 
     @Override

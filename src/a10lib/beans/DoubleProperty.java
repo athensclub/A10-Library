@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import a10lib.event.beansevt.DoubleChangedEvent;
 import a10lib.event.beansevt.ValueChangedEvent;
-import javafx.beans.value.ChangeListener;
 
 /**
  * A bean class for double values.<br>

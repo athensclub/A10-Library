@@ -8,11 +8,17 @@ import a10lib.util.Strings;
 
 public abstract class Tokenizer {
 
-    protected TokenFilter filter = TokenFilter.DO_NOTHING;
+    private TokenFilter filter = TokenFilter.DO_NOTHING;
 
-    protected ArrayList<TokenProvider> providers = new ArrayList<>();
+    private ArrayList<TokenProvider> providers = new ArrayList<>();
 
     private LinkedList<Character> pushBackBuffer = new LinkedList<>();
+
+    private Visitor visitor;
+
+    private Token next;
+
+    private boolean returnVisit;
 
     protected StringBuilder current;
 
@@ -62,13 +68,14 @@ public abstract class Tokenizer {
 
     /**
      * get the next character by implementation of each tokenizer's char stream
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     protected abstract char nextCharInStream() throws Exception;
 
     /**
-     * push the current token{@code Tokenizer} class's current {@code StringBuilder}
-     * object) back 1 character and append it later
+     * push the current token {@code Tokenizer} class's current
+     * {@code StringBuilder} object) back 1 character and append it later
      * 
      */
     public void previousChar() {
@@ -76,18 +83,32 @@ public abstract class Tokenizer {
     }
 
     /**
-     * append the next character to the current token({@code Tokenizer} class's
-     * current {@code StringBuilder} object)
+     * Make the given visitor visit this tokenizer's char stream
+     * 
+     * @param visitor
      */
-    public void nextChar() {
+    public void visit(Visitor visitor) {
+	this.visitor = visitor;
+	visitor.onBegin(current);
+	current = new StringBuilder();
+    }
+
+    public void endVisit() {
+	returnVisit = true;
+	next = visitor.createToken();
+	visitor = null;
+    }
+
+    /**
+     * get the next character in the stream
+     * 
+     * @throws Exception
+     */
+    public char nextChar() throws Exception {
 	if (!pushBackBuffer.isEmpty()) {
-	    current.append(pushBackBuffer.removeLast());
+	    return pushBackBuffer.removeLast();
 	} else {
-	    try {
-		current.append(nextCharInStream());
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    }
+	    return nextCharInStream();
 	}
     }
 
@@ -102,22 +123,41 @@ public abstract class Tokenizer {
      * Get the next token tokenized by given token providers
      * 
      * @return the next token tokenized by given token providers
-     * @throws ATokenizingException:
-     *             If found unexpected token
+     * @throws Exception
      */
-    public Token nextToken() throws ATokenizingException {
+    public Token nextToken() throws Exception {
 	current = new StringBuilder();
 	while (true) {
-	    if(eof() && pushBackBuffer.isEmpty()) {
-		    break;
+	    if (returnVisit || (eof() && pushBackBuffer.isEmpty())) {
+		break;
 	    }
-	    nextChar();
+	    char c = nextChar();
+	    if (visitor != null) {
+		visitor.nextChar(this, c);
+	    } else {
+		current.append(c);
+	    }
 	    filter.filter(current);
 	    for (TokenProvider provider : providers) {
-		if (provider.matchToken(this, current)) {
-		    return provider.createToken(current);
+		if (visitor == null) {
+		    if (provider.matchToken(this, current)) {
+			return provider.createToken(current);
+		    }
 		}
 	    }
+	    if (visitor != null && !returnVisit && eof()) {
+		break;
+	    }
+	}
+	if (returnVisit) {
+	    returnVisit = false;
+	    Token n = next;
+	    next = null;
+	    return n;
+	}
+	if (visitor != null) {
+	    visitor = null; //recover from exception
+	    throw new IllegalArgumentException("Visitor does not end when reach eof->" + visitor.createToken());
 	}
 	if (current.length() > 0) {
 	    for (TokenProvider provider : providers) {

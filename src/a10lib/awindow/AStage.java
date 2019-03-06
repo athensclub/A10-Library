@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import a10lib.awindow.acomponent.AComponent;
 
+@Deprecated
 public abstract class AStage implements MouseListener, KeyListener, MouseMotionListener,MouseTracker {
 
 	private AWindow window;

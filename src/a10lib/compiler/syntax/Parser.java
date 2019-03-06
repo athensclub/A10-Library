@@ -1,7 +1,9 @@
 package a10lib.compiler.syntax;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import a10lib.compiler.AParsingException;
 import a10lib.compiler.ATokenizingException;
@@ -30,7 +32,7 @@ public class Parser {
     private LinkedList<Block> subBlocks = new LinkedList<>();
 
     private boolean autoCompleteOnEof;
-    
+
     /**
      * Set whether this parser will automatically end current block when it reach
      * end of file or to throw an exception
@@ -50,6 +52,16 @@ public class Parser {
      *            the tokenizer that is going to provide tokens for this parser
      */
     public Parser(Tokenizer tokenizer) {
+	this.tokenizer = tokenizer;
+    }
+
+    /**
+     * Reset the tokenizier that is used for providing tokens for this parser to be
+     * the given tokeniizer
+     * 
+     * @param tokenizer
+     */
+    public void reset(Tokenizer tokenizer) {
 	this.tokenizer = tokenizer;
     }
 
@@ -102,14 +114,23 @@ public class Parser {
     }
 
     /**
+     * Get the all the sub blocks that is this parser is parsing.Should be used as
+     * unmodifiable list.Use peek() to see the inner-most block.
+     * 
+     * @return
+     */
+    public LinkedList<Block> getSubBlocks() {
+	return subBlocks;
+    }
+
+    /**
      * Parse using token provided by tokenizer then return global block as
-     * result;global block is a block which wrap everything in the given syntax
+     * result.global block is a block which wrap everything in the given syntax
      * 
      * @return global block of the tokenizer's syntax
-     * @throws AParsingException:
-     *             if there is syntax errpr
+     * @throws Exception
      */
-    public Block parse() throws AParsingException {
+    public Block parse() throws Exception {
 	Block global = globalBlockCreator.createBlock(null);
 	currentStatement = new LinkedList<>();
 	subBlocks = new LinkedList<>();
@@ -119,11 +140,7 @@ public class Parser {
 	    if (!buffer.isEmpty()) {
 		current = buffer.removeLast();
 	    } else {
-		try {
-		    current = tokenizer.nextToken();
-		} catch (ATokenizingException e) {
-		    e.printStackTrace();
-		}
+		current = tokenizer.nextToken();
 	    }
 	    if (buffer.isEmpty() && current == null) {
 		break;

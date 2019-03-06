@@ -13,7 +13,7 @@ public class StringTokenizer extends Tokenizer {
     private int index;
     
     /**
-     * Reset the string to be tokenized to the given string
+     * Reset the string to be tokenized to be the given string
      * @param str
      */
     public void reset(String str) {

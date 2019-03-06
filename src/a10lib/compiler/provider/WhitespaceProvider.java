@@ -52,7 +52,7 @@ public class WhitespaceProvider extends TokenProvider {
 
     @Override
     public boolean matchToken(Tokenizer tokenizer, StringBuilder string) {
-	if (Character.isWhitespace(string.charAt(string.length() - 1))) {
+	if (string.length() > 0 && Character.isWhitespace(string.charAt(string.length() - 1))) {
 	    if (string.length() == 1) {
 		string.deleteCharAt(0);
 	    } else {

@@ -67,11 +67,10 @@ public class PostfixParser extends Parser {
      * Parses the expression and calculate the result ignoring order of operations
      * 
      * @return the result of expression ignoring order of operations
-     * @throws AParsingException:
-     *             If failed to parse
+     * @throws Exception 
      */
-    public double evaluate() throws AParsingException {
-	return evaluate(((PostfixBlock) parse()).evaluate());
+    public double evaluate() throws Exception {
+	return evaluate(parsePostfix().evaluate());
     }
 
     /**
@@ -122,10 +121,9 @@ public class PostfixParser extends Parser {
      * 
      * @return the {@code PostfixBlock} gloabl block after parsing the current
      *         postfix expression
-     * @throws AParsingException:
-     *             If failed to parse
+     * @throws Exception 
      */
-    public PostfixBlock parsePostfix() throws AParsingException {
+    public PostfixBlock parsePostfix() throws Exception {
 	return (PostfixBlock) parse();
     }
 

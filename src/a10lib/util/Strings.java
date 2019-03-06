@@ -11,6 +11,42 @@ public final class Strings {
     }
 
     /**
+     * Take a c-like string in form of string as input and return java string as
+     * output.
+     * <p>
+     * For Example, If input string in java string form is <code>"\"hi!\\n\""</code>
+     * the return string in java string form is <code>"hi\n"</code>
+     * 
+     * </p>
+     * 
+     * @return
+     */
+    public static String parseString(String string) {
+	StringBuilder result = new StringBuilder();
+	boolean escape = false;
+	for (int i = 0; i < string.length(); i++) {
+	    char c = string.charAt(i);
+	    if (i == 0 || i == string.length() - 1) {
+		if (c != '"') {
+		    throw new IllegalArgumentException("String does not begin or end with \"");
+		}
+	    }else if (escape) {
+		result.append(Characters.getEscape(c));
+		escape = false;
+	    } else {
+		if (c == '\\') {
+		    escape = true;
+		} else if (c == '"') {
+		    throw new IllegalArgumentException("Unexpected character: \" at index: " + i);
+		} else {
+		    result.append(c);
+		}
+	    }
+	}
+	return result.toString();
+    }
+
+    /**
      * Check if the given string is representing a number.Number is defined by
      * {@link Regex#NUMBER_REGEX}
      * 
@@ -23,12 +59,13 @@ public final class Strings {
 
     /**
      * Get whether all the character in the given string is english alphabet or not
+     * 
      * @param str
      * @return
      */
     public static boolean isAllAlphabet(StringBuilder str) {
 	for (int i = 0; i < str.length(); i++) {
-	    if(!Characters.isAlphabet(str.charAt(i))) {
+	    if (!Characters.isAlphabet(str.charAt(i))) {
 		return false;
 	    }
 	}

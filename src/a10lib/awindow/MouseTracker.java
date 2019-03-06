@@ -1,5 +1,6 @@
 package a10lib.awindow;
 
+@Deprecated
 public interface MouseTracker {
 
 	/**

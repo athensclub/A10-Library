@@ -49,7 +49,7 @@ public class Block extends Statement {
      * 
      * @return The provider that created this Block
      */
-    protected BlockProvider getProvider() {
+    public BlockProvider getProvider() {
 	return provider;
     }
 

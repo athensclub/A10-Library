@@ -90,11 +90,7 @@ public interface MathSet<T> extends Set<T>,Cloneable {
 		try {
 		    return from((Set<E>) from.getClass().getMethod("clone").invoke(from));
 		} catch (Exception e) {
-		    try {
-			throw e;
-		    } catch (Exception e1) {
-			e1.printStackTrace();
-		    }
+		    e.printStackTrace();
 		}
 		throw new UnsupportedOperationException();
 	    }

@@ -30,7 +30,7 @@ public final class Strings {
 		if (c != '"') {
 		    throw new IllegalArgumentException("String does not begin or end with \"");
 		}
-	    }else if (escape) {
+	    } else if (escape) {
 		result.append(Characters.getEscape(c));
 		escape = false;
 	    } else {
@@ -95,7 +95,7 @@ public final class Strings {
      * Add {@code '\t'} in front every line in the given string
      * 
      * @param str
-     *            string to be appended
+     *                string to be appended
      * @return the string that added {@code '\t'} in front in every line
      */
     public static String addTabInFrontEveryLine(String str) {
@@ -225,6 +225,36 @@ public final class Strings {
 	return c;
     }
 
+    /**
+     * Replace the first occurrence of the old string with the replacement.
+     * @param sb
+     * @param old
+     * @param replacement
+     * @return
+     */
+    public static StringBuilder replaceFirst(StringBuilder sb,String old,String replacement) {
+	int i = sb.indexOf(old);
+	if(i == -1) {
+	    throw new IllegalArgumentException("Unable to find occurence of string: " + old);
+	}
+	return sb.replace(i, i+old.length(), replacement);
+    }
+
+    /**
+     * Replace all ocurrence of the old string with the replacement
+     * @param sb
+     * @param old
+     * @param replacement
+     * @return
+     */
+    public static StringBuilder replaceAll(StringBuilder sb,String old,String replacement) {
+	int i = -1;
+	while((i = sb.indexOf(old)) != -1) {
+	    sb.replace(i, i+old.length(), replacement);
+	}
+	return sb;
+    }
+    
     /**
      * Check if the given string builder end with the given string
      * 

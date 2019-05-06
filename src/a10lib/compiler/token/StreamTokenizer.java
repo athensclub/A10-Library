@@ -22,7 +22,7 @@ public class StreamTokenizer extends Tokenizer {
      * Create tokenizer that tokenize the string from the stream
      * 
      * @param stream:
-     *            the stream that is going to get tokenized
+     *                    the stream that is going to get tokenized
      */
     public StreamTokenizer(Reader stream) {
 	input = stream;
@@ -39,7 +39,16 @@ public class StreamTokenizer extends Tokenizer {
 
     @Override
     protected char nextCharInStream() throws IOException {
-	return (char) input.read();
+	try {
+	    int next = input.read();
+	    if(next == -1) {
+		throw new IOException("Eof");
+	    }
+	    return (char) next;
+	} catch (IOException e) {
+	    eof = true;
+	    throw e;
+	}
     }
 
     @Override

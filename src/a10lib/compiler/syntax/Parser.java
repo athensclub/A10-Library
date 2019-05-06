@@ -38,8 +38,9 @@ public class Parser {
      * end of file or to throw an exception
      * 
      * @param autoCompleteOnEof:
-     *            whether this parser will automatically end current block when it
-     *            reach end of file or to throw an exception
+     *                               whether this parser will automatically end
+     *                               current block when it reach end of file or to
+     *                               throw an exception
      */
     public void setAutoCompleteOnEof(boolean autoCompleteOnEof) {
 	this.autoCompleteOnEof = autoCompleteOnEof;
@@ -49,7 +50,8 @@ public class Parser {
      * Create new instance of parser that parse tokens provided by tokenizer
      * 
      * @param tokenizer:
-     *            the tokenizer that is going to provide tokens for this parser
+     *                       the tokenizer that is going to provide tokens for this
+     *                       parser
      */
     public Parser(Tokenizer tokenizer) {
 	this.tokenizer = tokenizer;
@@ -98,7 +100,8 @@ public class Parser {
      * creator must accept null as block begin statement
      * 
      * @param globalBlockCreator:
-     *            the block creator that will create Global Block for this parser
+     *                                the block creator that will create Global
+     *                                Block for this parser
      */
     public void setGlobalBlockCreator(BlockCreator globalBlockCreator) {
 	this.globalBlockCreator = globalBlockCreator;
@@ -142,6 +145,7 @@ public class Parser {
 	    } else {
 		current = tokenizer.nextToken();
 	    }
+	    
 	    if (buffer.isEmpty() && current == null) {
 		break;
 	    }
@@ -171,7 +175,6 @@ public class Parser {
 
 		}
 	    }
-
 	    if (!currentStatement.isEmpty()) {
 		for (StatementProvider provider : statementProvider) {
 		    if (provider.matchStatement(currentStatement)) {

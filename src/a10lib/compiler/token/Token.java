@@ -19,6 +19,10 @@ public class Token {
     public Token(String str) {
 	string = str;
     }
+    
+    protected Token() {
+	
+    }
 
     /**
      * Get the string that is in source file when it matches with this token type

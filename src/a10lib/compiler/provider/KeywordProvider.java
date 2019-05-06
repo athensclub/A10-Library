@@ -34,6 +34,8 @@ public class KeywordProvider extends TokenProvider {
 
     }
 
+    private TokenCreator tokenCreator;
+
     private ArrayList<String> keywords = new ArrayList<>();
 
     /**
@@ -41,10 +43,21 @@ public class KeywordProvider extends TokenProvider {
      * it will create token using given creator
      * 
      * @param keyword:
-     *            the new keyword
+     *                     the new keyword
      */
     public void addKeyword(String keyword) {
 	keywords.add(keyword);
+    }
+
+    /**
+     * Set the token creator that will create token created by this provider.If
+     * null,this keyword provider will use its default
+     * {@link #DEFAULT_KEYWORD_TOKEN_CREATOR}
+     * 
+     * @param tokenCreator
+     */
+    public void setTokenCreator(TokenCreator tokenCreator) {
+	this.tokenCreator = tokenCreator;
     }
 
     /**
@@ -52,13 +65,15 @@ public class KeywordProvider extends TokenProvider {
      * using given token when matches any of keywords
      * 
      * @param keywords:
-     *            the new keywords
+     *                      the new keywords
      */
     public void addKeywords(String... keywords) {
 	for (String key : keywords) {
 	    addKeyword(key);
 	}
     }
+    
+    int i= 0;
 
     @Override
     public boolean matchToken(Tokenizer tokenizer, StringBuilder string) {
@@ -81,7 +96,7 @@ public class KeywordProvider extends TokenProvider {
 
     @Override
     public Token createToken(StringBuilder string) {
-	return new DefaultKeywordToken(string.toString());
+	return tokenCreator == null ? DEFAULT_KEYWORD_TOKEN_CREATOR.createToken(string) : tokenCreator.createToken(string);
     }
 
 }

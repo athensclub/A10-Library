@@ -2,170 +2,249 @@ package a10lib.math;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import libs.BigFunctions.BigFunctions;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 /**
- * A utilities class for mathematics calculations (mostly algebra)
+ * A utilities class for mathematical calculation
  * 
  * @author Athensclub
  *
  */
 public final class Maths {
 
-    public static final BigDecimal DOUBLE_MAX_VALUE = BigDecimal.valueOf(Double.MAX_VALUE);
+    /**
+     * First 32 digits of mathematical constant pi
+     */
+    public static final BigDecimal PI = new BigDecimal("3.14159265358979323846264338327950");
 
     /**
-     * A minimum value possible for double. Same as DOUBLE_MAX_VALUE.negate()
+     * 32 digits of mathematical constant e
      */
-    public static final BigDecimal DOUBLE_MIN_VALUE = BigDecimal.valueOf(-Double.MAX_VALUE);
+    public static final BigDecimal E = new BigDecimal("2.71828182845904523536028747135266");
 
-    public static final BigDecimal INT_MAX_VALUE = BigDecimal.valueOf(Integer.MAX_VALUE);
+    public static final BigDecimal TWO = BigDecimal.valueOf(2);
 
-    public static final BigDecimal INT_MIN_VALUE = BigDecimal.valueOf(Integer.MIN_VALUE);
+    public static final BigDecimal TWO_PI = PI.multiply(TWO);
+
+    public static final BigDecimal PI_OVER_180 = PI.divide(BigDecimal.valueOf(180), MathContext.DECIMAL128);
+
+    public static final BigDecimal N180_OVER_PI = BigDecimal.valueOf(180).divide(PI, MathContext.DECIMAL128);
 
     private Maths() {
     }
 
+    public static boolean isNegative(BigDecimal val) {
+	return val.signum() < 0;
+    }
+
     /**
-     * Check whether the given BIgInteger is zero or not
+     * Convert degrees to radians
+     * 
+     * @param deg
+     * @return
+     */
+    public static BigDecimal toRadian(BigDecimal deg) {
+	return deg.multiply(PI_OVER_180);
+    }
+
+    /**
+     * Convert radians to degrees
+     * 
+     * @param rad
+     * @return
+     */
+    public static BigDecimal toDegree(BigDecimal rad) {
+	return rad.multiply(N180_OVER_PI);
+    }
+
+    /**
+     * Get integer part of number to the left of the decimal point
      * 
      * @param val
      * @return
      */
-    public static boolean isZero(BigInteger val) {
-	return val.compareTo(BigInteger.ZERO) == 0;
-    }
-
-    public static boolean isOdd(BigInteger val) {
-	return !isZero(val.and(BigInteger.ONE));
-    }
-
-    public static boolean isEven(BigInteger val) {
-	return isZero(val.and(BigInteger.ONE));
+    public static BigDecimal integerPart(BigDecimal val) {
+	return val.setScale(0, RoundingMode.DOWN);
     }
 
     /**
-     * Get the greatest common divisor for both decimal.Determined by converting
-     * both number to integer by multiplying with power of ten then find gcd of
-     * those number then divide the gcd with the previous power of ten.
-     * 
-     * 
-     * @param first
-     * @param second
-     * @return
-     */
-    public static BigDecimal gcd(BigDecimal first, BigDecimal second) {
-	int dp = Math.max(numberOfDecimalPlaces(first), numberOfDecimalPlaces(second));
-	BigDecimal power = BigDecimal.TEN.pow(dp);
-	return new BigDecimal(
-		gcd(first.multiply(power).toBigIntegerExact(), second.multiply(power).toBigIntegerExact()))
-			.divide(power);
-    }
-
-    /**
-     * Get the number of digits to the right of decimal point of the given
-     * BigDecimal value(excluding zeroes that come after the actual value)
+     * Get the fractional part of big decimal to the right of decimal point
      * 
      * @param val
      * @return
      */
-    public static int numberOfDecimalPlaces(BigDecimal val) {
-	return Math.max(0, val.stripTrailingZeros().scale());
+    public static BigDecimal decimalPart(BigDecimal val) {
+	return val.subtract(integerPart(val));
     }
 
     /**
-     * Get the greatest common divisor for both integers
+     * Check if the given value is integer or not.
      * 
-     * @param first
-     * @param second
+     * @param val
      * @return
      */
-    public static BigInteger gcd(BigInteger first, BigInteger second) {
+    public static boolean isInteger(BigDecimal val) {
+	return val.signum() == 0 || val.scale() <= 0 || val.stripTrailingZeros().scale() <= 0;
+    }
 
-	BigInteger p = first.abs();
-	BigInteger q = second.abs();
-	if (isZero(q)) {
-	    if (isZero(p)) {
-		return BigInteger.ONE;
+    private  static BigDecimal powInt(BigDecimal base,BigDecimal exp) {
+	if(exp.signum() < 0) {
+	    return BigDecimal.ONE.divide(powInt(base,exp.negate()),MathContext.DECIMAL128);
+	}
+	if(exp.signum() == 0) {
+	    return BigDecimal.ONE;
+	}
+	BigInteger n = exp.toBigIntegerExact();
+	BigDecimal result = BigDecimal.ONE;
+	while(n.signum() != 0) {
+	    if(n.and(BigInteger.ONE).signum() != 0) {
+		result = result.multiply(base);
+		n = n.subtract(BigInteger.ONE);
 	    }
-	    return p;
+	    base = base.multiply(base);
+	    n = n.shiftRight(1);
 	}
-	if (isZero(p)) {
-	    return q;
+	return result;
+    }
+    
+    /**
+     * Return natural exponent of value e^val.
+     * 
+     * @param val
+     * @return
+     */
+    public static BigDecimal exp(BigDecimal val) {
+	if (val.signum() < 0) {
+	    return BigDecimal.ONE.divide(exp(val.negate()), MathContext.DECIMAL128);
 	}
-	if (isEven(p) && isEven(q)) {
-	    return gcd(p.shiftRight(1), q.shiftRight(1)).shiftLeft(1);
-	} else if (isEven(p)) {
-	    return gcd(p.shiftRight(1), q);
-	} else if (isEven(q)) {
-	    return gcd(p, q.shiftRight(1));
-	} else if (p.compareTo(q) >= 0) {
-	    return gcd(p.subtract(q).shiftRight(1), q);
-	} else {
-	    return gcd(p, q.subtract(p).shiftRight(1));
+	BigDecimal integer = integerPart(val);
+	BigDecimal decimal = val.subtract(integer);
+	if (integer.signum() == 0) {
+	    return expTaylor(decimal);
 	}
+	// e^decimal part, use taylor series
+	BigDecimal expdec = expTaylor(decimal);
+	// e^integer part use basic exponentiation
+	BigDecimal expint = powInt(E, integer);
+	return expdec.multiply(expint).round(MathContext.DECIMAL128); // e^dec part * e^int part = e^dec + int = e^val
     }
 
     /**
-     * Check to see whether the given number is representing a integer(whole number)
-     * or not
+     * Find e^x for |x| < 1 using taylor series
      * 
-     * @param number
+     * @param val
      * @return
      */
-    public static boolean isInteger(BigDecimal number) {
-	return number.signum() == 0 || number.scale() <= 0 || number.stripTrailingZeros().scale() <= 0;
+    private static BigDecimal expTaylor(BigDecimal val) {
+	if (val.abs().compareTo(BigDecimal.ONE) > 0) {
+	    throw new IllegalArgumentException("expTaylor(x) | |x| > 1");
+	}
+	BigDecimal sum = BigDecimal.ONE;
+	BigDecimal fact = BigDecimal.ONE;
+	BigDecimal factc = BigDecimal.ONE;
+	BigDecimal expt = val;
+	for (int i = 0; i < 20; i++) {
+	    sum = sum.add(expt.divide(fact, MathContext.DECIMAL128));
+	    factc = factc.add(BigDecimal.ONE);
+	    fact = fact.multiply(factc);
+	    expt = expt.multiply(val);
+	}
+	return sum.round(MathContext.DECIMAL128);
     }
 
     /**
-     * Check if given number is even or odd
+     * Find the tan of the value using sin and cos which use taylor series
      * 
-     * @param number
+     * @param val
      * @return
      */
-    public static boolean isEven(BigDecimal number) {
-	if (!isInteger(number)) {
-	    throw new IllegalArgumentException("Check non-integer number for even?");
-	}
-	return number.remainder(BigDecimal.valueOf(2)).compareTo(BigDecimal.ZERO) == 0;
+    public static BigDecimal tan(BigDecimal val) {
+	return sin(val).divide(cos(val), MathContext.DECIMAL128);
     }
 
     /**
-     * Raise the given number to the given exponent.Loses precision quickly, Not
-     * recommended
+     * Calculate cos of big decimal using taylor series
      * 
-     * @param number
-     * @param exponent
+     * @param val
      * @return
      */
-    public static BigDecimal pow(BigDecimal number, BigDecimal exponent) {
-	//when number is < 0
-	if (number.compareTo(BigDecimal.ZERO) < 0) {
-	    if (isInteger(exponent)) {
-		if (isEven(exponent)) {
-		    return pow(number.abs(), exponent);
-		} else {
-		    return pow(number.abs(), exponent).negate();
-		}
-	    } else {
-		throw new IllegalArgumentException("Power result in imaginary number: " + number + " ^ " + exponent);
-	    }
+    public static BigDecimal cos(BigDecimal val) {
+	if (val.abs().compareTo(TWO_PI) > 0) {
+	    return cos(val.remainder(TWO_PI));
 	}
-	// best case: use big decimal standard pow method
-	if (isInteger(exponent) && exponent.compareTo(INT_MAX_VALUE) <= 0 && exponent.compareTo(INT_MIN_VALUE) >= 0) {
-	    return number.pow(exponent.intValueExact());
+	BigDecimal expt = BigDecimal.ONE;
+	BigDecimal sum = BigDecimal.ZERO;
+	BigDecimal fact = BigDecimal.ONE;
+	BigDecimal factc = BigDecimal.ZERO;
+	BigDecimal valsq = val.pow(2);
+	for (int i = 0; i < 20; i++) {
+	    sum = sum.add(expt.divide(fact, MathContext.DECIMAL128));
+	    // increase x exponent and negate
+	    expt = expt.multiply(valsq).negate();
+	    // increase factorial
+	    factc = factc.add(BigDecimal.ONE);
+	    fact = fact.multiply(factc);
+	    factc = factc.add(BigDecimal.ONE);
+	    fact = fact.multiply(factc);
 	}
-	// when best case not possible: try to use java standard Math.pow when possible
-	if (number.compareTo(DOUBLE_MAX_VALUE) <= 0 && number.compareTo(DOUBLE_MIN_VALUE) >= 0
-		&& exponent.compareTo(DOUBLE_MAX_VALUE) <= 0 && exponent.compareTo(DOUBLE_MIN_VALUE) >= 0) {
-	    double result = Math.pow(number.doubleValue(), exponent.doubleValue());
-	    if (!Double.isNaN(result) && Double.isFinite(result)) {
-		return new BigDecimal(String.format("%.0f", result));
-	    }
+	return sum.round(MathContext.DECIMAL128);
+    }
+
+    /**
+     * Calculate sin of big decimal using taylor series
+     * 
+     * @param val
+     * @return
+     */
+    public static BigDecimal sin(BigDecimal val) {
+	if (val.abs().compareTo(TWO_PI) > 0) {
+	    return sin(val.remainder(TWO_PI));
 	}
-	// worst case: use inaccurate (because of scaling) e^(ln(x*n))
-	return BigFunctions.exp(BigFunctions.ln(number, 30 + number.scale()).multiply(exponent), 30 + number.scale());
+	BigDecimal sum = BigDecimal.ZERO;
+	BigDecimal fact = BigDecimal.ONE;
+	BigDecimal factc = BigDecimal.ONE;
+	BigDecimal expt = val;
+	BigDecimal valsq = val.multiply(val);
+	for (int i = 0; i < 20; i++) {
+	    sum = sum.add(expt.divide(fact, MathContext.DECIMAL128));
+	    // increase x exponent and negate
+	    expt = expt.multiply(valsq).negate();
+	    // increase factorial
+	    factc = factc.add(BigDecimal.ONE);
+	    fact = fact.multiply(factc);
+	    factc = factc.add(BigDecimal.ONE);
+	    fact = fact.multiply(factc);
+	}
+	return sum.round(MathContext.DECIMAL128);
+    }
+
+    /**
+     * clamping is the process of limiting a position to an area. Unlike wrapping,
+     * clamping merely moves the point to the nearest available value.
+     * <p>
+     * To put clamping into perspective, pseudocode for clamping is as follows:
+     * Pseudocode (clamping):
+     * </p>
+     * <code>
+     * function clamp(x, min, max): <br/>
+     * if (x < min) then <br/>
+     * x = min;<br/>
+     * else if (x > max) then<br/>
+     *   x = max;<br/>
+     * return x;<br/>
+     * end clamp<br/>
+     * </code>
+     * 
+     * @see https://en.wikipedia.org/wiki/Clamping_(graphics)
+     * 
+     * @param val
+     * @param min
+     * @param max
+     * @return
+     */
+    public static int clamp(int val, int min, int max) {
+	return val < min ? min : val > max ? max : val;
     }
 
 }

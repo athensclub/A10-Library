@@ -27,23 +27,22 @@ public class EqualsMap<K, V> extends AbstractMap<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
 
-	if (entrySet != null) {
-	    return entrySet;
+	if (entrySet == null) {
+	    entrySet = new AbstractSet<Entry<K, V>>() {
+
+		@Override
+		public Iterator<Entry<K, V>> iterator() {
+		    return entries.iterator();
+		}
+
+		@Override
+		public int size() {
+		    return entries.size();
+		}
+
+	    };
 	}
 
-	entrySet = new AbstractSet<Entry<K, V>>() {
-
-	    @Override
-	    public Iterator<Entry<K, V>> iterator() {
-		return entries.iterator();
-	    }
-
-	    @Override
-	    public int size() {
-		return entries.size();
-	    }
-
-	};
 	return entrySet;
     }
 

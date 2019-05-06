@@ -1,30 +1,25 @@
 package a10lib.compiler.token;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import a10lib.compiler.ATokenizingException;
+import a10lib.compiler.provider.DecimalNumberProvider;
 import a10lib.util.Strings;
 
 public abstract class Tokenizer {
-
-    private TokenFilter filter = TokenFilter.DO_NOTHING;
 
     private ArrayList<TokenProvider> providers = new ArrayList<>();
 
     private LinkedList<Character> pushBackBuffer = new LinkedList<>();
 
-    private Visitor visitor;
+    private LinkedList<Visitor> visitors = new LinkedList<>();
 
     private Token next;
 
-    private boolean returnVisit;
-
     protected StringBuilder current;
-
-    public void setFilter(TokenFilter filter) {
-	this.filter = filter;
-    }
 
     public void addProvider(TokenProvider p) {
 	providers.add(p);
@@ -67,6 +62,16 @@ public abstract class Tokenizer {
     }
 
     /**
+     * Set the current string builder of the current token.This should not be called
+     * unless neccessary.
+     * 
+     * @param str
+     */
+    public void setCurrent(StringBuilder str) {
+	current = str;
+    }
+
+    /**
      * get the next character by implementation of each tokenizer's char stream
      * 
      * @throws Exception
@@ -75,11 +80,21 @@ public abstract class Tokenizer {
 
     /**
      * push the current token {@code Tokenizer} class's current
-     * {@code StringBuilder} object) back 1 character and append it later
+     * {@code StringBuilder} object) back 1 character and append it later.
      * 
      */
     public void previousChar() {
 	pushBackBuffer.addLast(Strings.removeLastChar(current));
+    }
+
+    /**
+     * Push the given character into same buffer as previousChar() buffer to append
+     * it later.The character that is appended last will be used first.
+     * 
+     * @param c
+     */
+    public void pushPreviousChar(char c) {
+	pushBackBuffer.addLast(c);
     }
 
     /**
@@ -88,15 +103,27 @@ public abstract class Tokenizer {
      * @param visitor
      */
     public void visit(Visitor visitor) {
-	this.visitor = visitor;
-	visitor.onBegin(current);
+	visitors.addLast(visitor);
+	visitor.onBegin(this, current);
 	current = new StringBuilder();
     }
 
+    /**
+     * End the visit of the most recent visitor that is still not ended visiting.
+     */
     public void endVisit() {
-	returnVisit = true;
-	next = visitor.createToken();
-	visitor = null;
+	Visitor last = visitors.removeLast();
+	Token token = last.createToken();
+	if (visitors.isEmpty()) {
+	    if (next == null) {
+		next = token;
+	    } else {
+		next = null;
+		throw new IllegalStateException("next != null, endVisit() called");
+	    }
+	} else {
+	    visitors.getLast().onEnter(this, token);
+	}
     }
 
     /**
@@ -127,37 +154,39 @@ public abstract class Tokenizer {
      */
     public Token nextToken() throws Exception {
 	current = new StringBuilder();
-	while (true) {
-	    if (returnVisit || (eof() && pushBackBuffer.isEmpty())) {
-		break;
+	while (!(eof() && pushBackBuffer.isEmpty())) {
+	    char c = (char) -1;
+	    try {
+		c = nextChar();
+	    } catch (IOException e) {
+		continue;
 	    }
-	    char c = nextChar();
-	    if (visitor != null) {
-		visitor.nextChar(this, c);
+	    if (!visitors.isEmpty()) {
+		visitors.getLast().nextChar(this, c);
+		if (next != null) {
+		    Token t = next;
+		    next = null;
+		    return t;
+		}
 	    } else {
 		current.append(c);
-	    }
-	    filter.filter(current);
-	    for (TokenProvider provider : providers) {
-		if (visitor == null) {
+		for (TokenProvider provider : providers) {
 		    if (provider.matchToken(this, current)) {
 			return provider.createToken(current);
 		    }
 		}
 	    }
-	    if (visitor != null && !returnVisit && eof()) {
-		break;
-	    }
 	}
-	if (returnVisit) {
-	    returnVisit = false;
-	    Token n = next;
+	if (next != null) {
+	    Token t = next;
 	    next = null;
-	    return n;
+	    return t;
 	}
-	if (visitor != null) {
-	    visitor = null; //recover from exception
-	    throw new IllegalArgumentException("Visitor does not end when reach eof->" + visitor.createToken());
+	if (!visitors.isEmpty()) {
+	    @SuppressWarnings("unchecked")
+	    List<Visitor> v = (List<Visitor>) visitors.clone();
+	    visitors.clear(); // recover from exception
+	    throw new IllegalArgumentException("Visitor does not end when reach eof: " + v);
 	}
 	if (current.length() > 0) {
 	    for (TokenProvider provider : providers) {

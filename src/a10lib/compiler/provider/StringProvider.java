@@ -15,7 +15,13 @@ import a10lib.util.Characters;
 public class StringProvider extends TokenProvider {
 
     /**
-     * A token class that represent string token
+     * A cache single instance of this string provider.
+     */
+    public static final StringProvider INSTANCE = new StringProvider();
+
+    /**
+     * A token class that represent string token.This token is created when
+     * StringProvider found string token.
      * 
      * @author Athensclub
      *
@@ -49,7 +55,7 @@ public class StringProvider extends TokenProvider {
 	private boolean escape;
 
 	@Override
-	public void onBegin(StringBuilder string) {
+	public void onBegin(Tokenizer tokenizer,StringBuilder string) {
 	    this.string = string;
 	    result = new StringBuilder();
 	}
@@ -74,6 +80,11 @@ public class StringProvider extends TokenProvider {
 	@Override
 	public Token createToken() {
 	    return new Token(string.toString(), result.toString());
+	}
+
+	@Override
+	public void onEnter(Tokenizer tokenizer, a10lib.compiler.token.Token token) {
+	    throw new IllegalStateException("StringProvider Visitor should not be exited to other visitor.");
 	}
 
     }
